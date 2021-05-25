@@ -1,0 +1,48 @@
+{
+	"presets": [
+		[
+			"@babel/preset-env",
+			{
+				"modules": false,
+			},
+		],
+		// [
+		// 	"@babel/preset-react",
+		// 	{
+		// 		"runtime": "automatic",
+		// 		"development": true,
+		// 		"importSource": "@welldone-software/why-did-you-render",
+		// 	},
+		// ],
+	],
+	"plugins": [
+		"babel-plugin-macros",
+		["@babel/plugin-transform-react-jsx", { "pragma": "__cssprop" }],
+		"@babel/plugin-proposal-class-properties",
+		"@babel/plugin-proposal-optional-chaining",
+		"@babel/plugin-syntax-dynamic-import",
+		"@babel/plugin-proposal-numeric-separator",
+	],
+	"env": {
+		"development": {
+			"presets": [],
+		},
+		"production": {
+			"only": ["src"],
+			"plugins": [
+				"lodash",
+				"transform-react-remove-prop-types",
+				// "@babel/plugin-transform-react-inline-elements", // Not compatible with emotion css prop
+				"@babel/plugin-transform-react-constant-elements",
+			],
+			"presets": [],
+		},
+		"test": {
+			"plugins": [
+				"@babel/plugin-transform-modules-commonjs",
+				"@babel/plugin-syntax-dynamic-import",
+				"dynamic-import-node",
+			],
+		},
+	},
+}
