@@ -24,4 +24,4 @@ Enable the rule in your `eslint` configuration:
 }
 ```
 
-See `should-skip-update` for more information.
+See [`should-skip-update`](https://github.com/joeyparis/should-skip-update) for more information.
