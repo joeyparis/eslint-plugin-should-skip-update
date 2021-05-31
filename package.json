@@ -7,6 +7,11 @@
     "build": "rollup -c rollup.config.js",
     "test": "jest"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joeyparis/eslint-plugin-should-skip-update"
+  },
+  "homepage": "https://www.npmjs.com/package/eslint-plugin-should-skip-update",
   "keywords": [
     "react",
     "memo",
