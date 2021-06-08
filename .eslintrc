@@ -1,7 +1,7 @@
 {
     "root": true,
     "extends": ["airbnb-base", "plugin:eslint-plugin/recommended", "plugin:react/recommended", "plugin:jest/recommended"],
-    "plugins": ["eslint-plugin", "should-skip-update", "react"],
+    "plugins": ["eslint-plugin", "react"],
     "env": {
        "es6": true,
        "node": true,
@@ -45,8 +45,7 @@
           "requireReturn": false,
           "requireParamDescription": false,
           "requireReturnDescription": false,
-        }],
-        'should-skip-update/dependencies': 1,
+        }]
     },
     "overrides": [
       {

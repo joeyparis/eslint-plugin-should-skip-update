@@ -1,10 +1,10 @@
 import React, { memo } from 'react';
-import shouldSkipUpdate from 'should-skip-update';
+// import shouldSkipUpdate from 'should-skip-update';
 
-function Hello({names}) {
-  return names.map((name) => {
+function Hello({ names }) {
+  return [].map((name) => {
     return <div>{name}</div>;
   });
 }
-memo(Hello, shouldSkipUpdate(['names']))
+// memo(Hello, shouldSkipUpdate(['names']))
 

@@ -470,14 +470,14 @@ const tests = {
         '      propX,',
         '      "aria-controls": ariaControls, ',
         '      ...props } = this.props;',
-        '    return <div>Hello</div>;',
+        '    return <div propX={propX} {...ariaControls}>Hello</div>;',
         '  }',
         '}',
         'Hello.propTypes = {',
         '  "propX": PropTypes.string,',
         '  "aria-controls": PropTypes.string',
         '};',
-        'memo(Hello, shouldSkipUpdate([\'propX\',\'aria-controls\']))'
+        'memo(Hello, shouldSkipUpdate([\'propX\', \'aria-controls\']))'
       ].join('\n'),
       parser: parsers.BABEL_ESLINT
     },
@@ -936,6 +936,7 @@ const tests = {
       parser: parsers.BABEL_ESLINT
     },
     {
+      // only: true,
       code: [
         'const Hello = (props) => {',
         '  let team = props.names.map((name) => {',
@@ -1316,6 +1317,7 @@ const tests = {
       parser: parsers.BABEL_ESLINT
     },
     {
+      // only: true,
       code: [
         'type Props = {',
         '  firstname: string;',
@@ -1427,11 +1429,12 @@ const tests = {
       ].join('\n')
     },
     {
+      // only: true,
       code: [
         'function JobList(props) {',
         '  props',
         '  .jobs',
-        '  .forEach(() => {});',
+        '  .forEach((job) => {console.info(job)});',
         '  return <div></div>;',
         '}',
         'JobList.propTypes = {',
@@ -3378,7 +3381,18 @@ const tests = {
           memo(Factory, shouldSkipUpdate(['name']))
         `,
         parser: parsers['@TYPESCRIPT_ESLINT']
-      }
+      },
+      {
+        // only: true,
+        code: `
+          const Foo = ({ bar }) => {
+            return <div><Bar /></div>
+          }
+
+          memo(Foo, shouldSkipUpdate([]))
+        `,
+        parser: parsers.BABEL_ESLINT
+      },
     ])
   ),
 
@@ -3688,7 +3702,7 @@ const tests = {
         'class Hello extends React.Component {',
         '  render() {',
         '    const { name, ...rest } = this.props',
-        '    return <div>Hello</div>;',
+        '    return <div>Hello, {name}</div>;',
         '  }',
         '}',
         'memo(Hello, shouldSkipUpdate([]))'
@@ -3709,7 +3723,7 @@ const tests = {
         'class Hello extends React.Component {',
         '  render() {',
         '    const { name, title, ...rest } = this.props',
-        '    return <div>Hello</div>;',
+        '    return <div>Hello, {title} {name}</div>;',
         '  }',
         '}',
         'Hello.propTypes = {',
@@ -3868,7 +3882,7 @@ const tests = {
         'class Hello extends React.Component {',
         '  render() {',
         '    var { firstname, lastname } = this.props;',
-        '    return <div>Hello</div>;',
+        '    return <div>Hello, {firstname} {lastname}</div>;',
         '  }',
         '}',
         'Hello.propTypes = {',
@@ -4140,7 +4154,7 @@ const tests = {
         '      "aria-controls": ariaControls, ',
         '      propX,',
         '      ...props } = this.props;',
-        '    return <div>Hello</div>;',
+        '    return <div propX={propX}>Hello</div>;',
         '  }',
         '}',
         'Hello.propTypes = {',
@@ -5171,16 +5185,16 @@ const tests = {
         '  names = names.map(({firstname, lastname}) => <div>{firstname} {lastname}</div>);',
         '  return <Hello>{names}</Hello>;',
         '}',
-        'memo(Greetings, shouldSkipUpdate([]))'
+        'memo(Greetings, shouldSkipUpdate([\'names.map\']))'
       ].join('\n'),
       errors: [
         {
           messageId: 'missingFromShouldSkipUpdateDependencies',
-          data: {name: 'names.map'}
+          data: {name: 'names'}
         },
         {
           messageId: 'missingShouldSkipUpdateDependency',
-          data: {name: 'names.map'}
+          data: {name: 'names'}
         }
       ]
     },
@@ -5422,7 +5436,7 @@ const tests = {
         '  a: number,',
         '};',
         'function MyComponent({ a, b }: MyComponentProps) {',
-        '  return <div />;',
+        '  return <div>{a}{b}</div>;',
         '}',
         'memo(MyComponent, shouldSkipUpdate([\'a\']))'
       ].join('\n'),
@@ -5553,7 +5567,7 @@ const tests = {
         '  +a: number,',
         '};',
         'function MyComponent({ a, b }: MyComponentProps) {',
-        '  return <div />;',
+        '  return <div>{a}{b}</div>;',
         '}',
         'memo(MyComponent, shouldSkipUpdate([\'a\']))'
       ].join('\n'),
@@ -5575,7 +5589,7 @@ const tests = {
         '  -a: number,',
         '};',
         'function MyComponent({ a, b }: MyComponentProps) {',
-        '  return <div />;',
+        '  return <div>{a}{b}</div>;',
         '}',
         'memo(MyComponent, shouldSkipUpdate([\'a\']))'
       ].join('\n'),
@@ -6043,6 +6057,7 @@ const tests = {
       parser: parsers.BABEL_ESLINT
     },
     {
+      // only: true,
       code: [
         'type Props = {result?: {ok: string | boolean;}|{ok: number | Array}};',
         'class Hello extends React.Component<void, Props, void> {',
@@ -6054,6 +6069,10 @@ const tests = {
       ].join('\n'),
       settings: {react: {flowVersion: '0.52'}},
       errors: [
+        // {
+        //   messageId: 'missingFromShouldSkipUpdateDependencies',
+        //   data: {name: 'result'}
+        // },
         {
           messageId: 'missingFromShouldSkipUpdateDependencies',
           data: {name: 'result.notok'}
@@ -6061,7 +6080,11 @@ const tests = {
         {
           messageId: 'missingShouldSkipUpdateDependency',
           data: {name: 'result.notok'}
-        }
+        },
+        // {
+        //   messageId: 'missingShouldSkipUpdateDependency',
+        //   data: {name: 'result'}
+        // }
       ],
       parser: parsers.BABEL_ESLINT
     },
@@ -6840,7 +6863,7 @@ const tests = {
         export default memo(class Controller extends React.Component {
           handleAdd = id => {
             this.setState((state, { name }) => {
-                const item = this.buildItem(id);
+                const item = this.buildItem(id, name);
             });
           };
         }, shouldSkipUpdate([]))
@@ -6934,7 +6957,7 @@ const tests = {
         type Props = {| ...UsedProps, ...UnusedProps |};
 
         function MyComponent({ usedProp, notOne }: Props) {
-          return <div>{usedProp}</div>;
+          return <div>{usedProp}{notOne}</div>;
         }
 
         memo(MyComponent, shouldSkipUpdate(['usedProp', 'unusedProp']))
@@ -6978,6 +7001,7 @@ const tests = {
     },
     {
       // issue #2330
+      // only: true,
       code: `
         type Props = {
           user: {
@@ -7079,7 +7103,7 @@ const tests = {
             baz
           },
         }) {
-          return <p>{foo.reduce(() => 5)}</p>;
+          return <p>{baz}{foo.reduce(() => 5)}</p>;
         }
 
         Foo.propTypes = {
@@ -7130,14 +7154,15 @@ const tests = {
       ]
     },
     {
+      // only: true,
       code: `
-        const firstType = PropTypes.shape({
-          id: PropTypes.number,
-        });
+        // const firstTypes = PropTypes.shape({
+        //   id: PropTypes.number,
+        // });
         class ComponentX extends React.Component {
-          static propTypes = {
-            first: firstType.isRequired,
-          };
+          // static propTypes = {
+          //   first: firstType.isRequired,
+          // };
           render() {
             return (
               <div>
@@ -7192,6 +7217,7 @@ const tests = {
       ]
     },
     {
+      // only: true,
       code: `
         const firstType = PropTypes.shape({
           id: PropTypes.number,
@@ -7230,7 +7256,7 @@ const tests = {
             baz
           },
         }) {
-          return <p>{foo.reduce(() => 5)}</p>;
+          return <p>{baz}{foo.reduce(() => 5)}</p>;
         }
         const fooType = PropTypes.shape({
           bar: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -7259,7 +7285,7 @@ const tests = {
             baz
           },
         }) {
-          return <p>{foo.reduce(() => 5)}</p>;
+          return <p>{baz}{foo.reduce(() => 5)}</p>;
         }
         const fooType = PropTypes.shape({
           bar: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -7288,7 +7314,7 @@ const tests = {
             baz
           },
         }) {
-          return <p>{foo.reduce(() => 5)}</p>;
+          return <p>{baz}{foo.reduce(() => 5)}</p>;
         }
         
         memo(Foo, shouldSkipUpdate(['foo.bar']))
@@ -8146,7 +8172,159 @@ const tests = {
           }
         ],
         parser: parsers['@TYPESCRIPT_ESLINT']
-      }
+      },
+      {
+        code: `
+          const Foo = ({ bar }) => {
+            return <div>{bar.id}<Bar bar={bar} /></div>
+          }
+
+          memo(Foo, shouldSkipUpdate(['bar.id']))
+        `,
+        errors: [
+          {
+            messageId: 'missingFromShouldSkipUpdateDependencies',
+            data: {name: 'bar'}
+          },
+          {
+            messageId: 'missingShouldSkipUpdateDependency',
+            data: {name: 'bar'}
+          }
+        ],
+        parser: parsers.BABEL_ESLINT
+      },
+      {
+        code: `
+          const Foo = ({ bar: far }) => {
+            return <div>{far.id}<Bar bar={far} /></div>
+          }
+
+          memo(Foo, shouldSkipUpdate(['bar.id']))
+        `,
+        errors: [
+          {
+            messageId: 'missingFromShouldSkipUpdateDependencies',
+            data: {name: 'bar'}
+          },
+          {
+            messageId: 'missingShouldSkipUpdateDependency',
+            data: {name: 'bar'}
+          }
+        ],
+        parser: parsers.BABEL_ESLINT
+      },
+      {
+        // only: true,
+        code: `
+          const Foo = ({ bar }) => {
+            const new_bar = {foo: 'zap', ...bar}
+            return <div>{bar.id}</div>
+          }
+
+          memo(Foo, shouldSkipUpdate(['bar.id']))
+        `,
+        errors: [
+          {
+            messageId: 'missingFromShouldSkipUpdateDependencies',
+            data: {name: 'bar'}
+          },
+          {
+            messageId: 'missingShouldSkipUpdateDependency',
+            data: {name: 'bar'}
+          }
+        ],
+        parser: parsers.BABEL_ESLINT
+      },
+      {
+        code: `
+          const Foo = ({ bar }) => {
+            useEffect(() => {
+              // Do something with bar...
+            }, [bar])
+
+            return <div>{bar.id}</div>
+          }
+
+          memo(Foo, shouldSkipUpdate(['bar.id']))
+        `,
+        errors: [
+          {
+            messageId: 'missingFromShouldSkipUpdateDependencies',
+            data: {name: 'bar'}
+          },
+          {
+            messageId: 'missingShouldSkipUpdateDependency',
+            data: {name: 'bar'}
+          }
+        ],
+        parser: parsers.BABEL_ESLINT
+      },
+      {
+        code: `
+          const Foo = ({ bar }) => {
+            return <div>{bar.id}<Bar /></div>
+          }
+
+          memo(Foo, shouldSkipUpdate([]))
+        `,
+        errors: [
+          {
+            messageId: 'missingFromShouldSkipUpdateDependencies',
+            data: {name: 'bar.id'}
+          },
+          {
+            messageId: 'missingShouldSkipUpdateDependency',
+            data: {name: 'bar.id'}
+          }
+        ],
+        parser: parsers.BABEL_ESLINT
+      },
+      {
+        code: `
+          const Foo = ({ bar }) => {
+
+            const { foo } = bar
+
+            if (!foo) return null
+
+            return <div>{foo.id}</div>
+          }
+
+          memo(Foo, shouldSkipUpdate(['bar.foo.id']))
+        `,
+        errors: [
+          {
+            messageId: 'missingFromShouldSkipUpdateDependencies',
+            data: {name: 'bar.foo'}
+          },
+          {
+            messageId: 'missingShouldSkipUpdateDependency',
+            data: {name: 'bar.foo'}
+          }
+        ],
+        parser: parsers.BABEL_ESLINT
+      },
+      // {
+      //   code: `
+      //     const Foo = ({ bar }) => {
+
+      //       return <div><Bar /></div>
+      //     }
+
+      //     memo(Foo, shouldSkipUpdate([]))
+      //   `,
+      //   errors: [
+      //     {
+      //       messageId: 'missingFromShouldSkipUpdateDependencies',
+      //       data: {name: 'bar'}
+      //     },
+      //     {
+      //       messageId: 'missingShouldSkipUpdateDependency',
+      //       data: {name: 'bar'}
+      //     }
+      //   ],
+      //   parser: parsers.BABEL_ESLINT
+      // },
     ])
   )
 };
