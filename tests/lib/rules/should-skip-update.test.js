@@ -262,6 +262,7 @@ const tests = {
       ].join('\n')
     },
     {
+      // only: true,
       code: [
         'class Hello extends React.Component {',
         '  render() {',
@@ -8280,6 +8281,7 @@ const tests = {
         parser: parsers.BABEL_ESLINT
       },
       {
+        // only: true,
         code: `
           const Foo = ({ bar }) => {
 
