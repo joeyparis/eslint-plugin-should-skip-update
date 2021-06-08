@@ -95,7 +95,6 @@ const tests = {
         '  }',
         '});',
         'memo(Hello, shouldSkipUpdate([]))'
-        // 'memo(Hello, shouldSkipUpdate([\'foo\']))'
       ].join('\n')
     },
     {
@@ -262,7 +261,6 @@ const tests = {
       ].join('\n')
     },
     {
-      // only: true,
       code: [
         'class Hello extends React.Component {',
         '  render() {',
@@ -911,7 +909,6 @@ const tests = {
       parser: parsers.BABEL_ESLINT
     },
     {
-      // only: true,
       code: [
         'class DynamicHello extends Component {',
         '  render() {',
@@ -937,7 +934,6 @@ const tests = {
       parser: parsers.BABEL_ESLINT
     },
     {
-      // only: true,
       code: [
         'const Hello = (props) => {',
         '  let team = props.names.map((name) => {',
@@ -953,17 +949,18 @@ const tests = {
       ].join('\n'),
       parser: parsers.BABEL_ESLINT
     },
-    // {
-    //   code: [
-    //     'export default {',
-    //     '  renderHello() {',
-    //     '    let {name} = this.props;',
-    //     '    return <div>{name}</div>;',
-    //     '  }',
-    //     '};'
-    //   ].join('\n'),
-    //   parser: parsers.BABEL_ESLINT
-    // },
+    {
+      code: [
+        'const hello = {',
+        '  renderHello() {',
+        '    let {name} = this.props;',
+        '    return <div>{name}</div>;',
+        '  }',
+        '};',
+        'export default memo(Hello, shouldSkipUpdate([]));'
+      ].join('\n'),
+      parser: parsers.BABEL_ESLINT
+    },
     {
       code: [
         'export default function FooBar(props) {',
@@ -1318,7 +1315,6 @@ const tests = {
       parser: parsers.BABEL_ESLINT
     },
     {
-      // only: true,
       code: [
         'type Props = {',
         '  firstname: string;',
@@ -1430,7 +1426,6 @@ const tests = {
       ].join('\n')
     },
     {
-      // only: true,
       code: [
         'function JobList(props) {',
         '  props',
@@ -3384,7 +3379,6 @@ const tests = {
         parser: parsers['@TYPESCRIPT_ESLINT']
       },
       {
-        // only: true,
         code: `
           const Foo = ({ bar }) => {
             return <div><Bar /></div>
@@ -6070,10 +6064,6 @@ const tests = {
       ].join('\n'),
       settings: {react: {flowVersion: '0.52'}},
       errors: [
-        // {
-        //   messageId: 'missingFromShouldSkipUpdateDependencies',
-        //   data: {name: 'result'}
-        // },
         {
           messageId: 'missingFromShouldSkipUpdateDependencies',
           data: {name: 'result.notok'}
@@ -6082,10 +6072,6 @@ const tests = {
           messageId: 'missingShouldSkipUpdateDependency',
           data: {name: 'result.notok'}
         },
-        // {
-        //   messageId: 'missingShouldSkipUpdateDependency',
-        //   data: {name: 'result'}
-        // }
       ],
       parser: parsers.BABEL_ESLINT
     },
@@ -6694,7 +6680,6 @@ const tests = {
       ]
     },
     {
-      // only: true,
       code: `
         const HeaderBalance = Foo.memo(({ cryptoCurrency }) => (
           <div className="header-balance">
@@ -7002,7 +6987,6 @@ const tests = {
     },
     {
       // issue #2330
-      // only: true,
       code: `
         type Props = {
           user: {
@@ -7155,7 +7139,6 @@ const tests = {
       ]
     },
     {
-      // only: true,
       code: `
         // const firstTypes = PropTypes.shape({
         //   id: PropTypes.number,
@@ -7218,7 +7201,6 @@ const tests = {
       ]
     },
     {
-      // only: true,
       code: `
         const firstType = PropTypes.shape({
           id: PropTypes.number,
@@ -8215,7 +8197,6 @@ const tests = {
         parser: parsers.BABEL_ESLINT
       },
       {
-        // only: true,
         code: `
           const Foo = ({ bar }) => {
             const new_bar = {foo: 'zap', ...bar}
@@ -8281,7 +8262,6 @@ const tests = {
         parser: parsers.BABEL_ESLINT
       },
       {
-        // only: true,
         code: `
           const Foo = ({ bar }) => {
 
@@ -8306,27 +8286,6 @@ const tests = {
         ],
         parser: parsers.BABEL_ESLINT
       },
-      // {
-      //   code: `
-      //     const Foo = ({ bar }) => {
-
-      //       return <div><Bar /></div>
-      //     }
-
-      //     memo(Foo, shouldSkipUpdate([]))
-      //   `,
-      //   errors: [
-      //     {
-      //       messageId: 'missingFromShouldSkipUpdateDependencies',
-      //       data: {name: 'bar'}
-      //     },
-      //     {
-      //       messageId: 'missingShouldSkipUpdateDependency',
-      //       data: {name: 'bar'}
-      //     }
-      //   ],
-      //   parser: parsers.BABEL_ESLINT
-      // },
     ])
   )
 };
