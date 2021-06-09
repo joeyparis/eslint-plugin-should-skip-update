@@ -3408,7 +3408,7 @@ const tests = {
           export default memo(Hello)
         `,
         parser: parsers.BABEL_ESLINT
-      },
+      }
     ])
   ),
 
@@ -4117,7 +4117,7 @@ const tests = {
         {
           messageId: 'missingShouldSkipUpdateDependency',
           data: {name: 'a.length'}
-        },
+        }
       ]
     },
     {
@@ -4663,7 +4663,7 @@ const tests = {
         {
           messageId: 'missingShouldSkipUpdateDependency',
           data: {name: 'firstname'}
-        },
+        }
       ]
     },
     {
@@ -6092,7 +6092,7 @@ const tests = {
         {
           messageId: 'missingShouldSkipUpdateDependency',
           data: {name: 'result.notok'}
-        },
+        }
       ],
       parser: parsers.BABEL_ESLINT
     },
@@ -8320,7 +8320,7 @@ const tests = {
         `,
         errors: [
           {
-            messageId: 'missingShouldSkipUpdateDependencies',
+            messageId: 'missingShouldSkipUpdateDependencies'
           }
         ],
         parser: parsers.BABEL_ESLINT
@@ -8341,65 +8341,66 @@ const tests = {
         ],
         parser: parsers.BABEL_ESLINT,
         options: [{ignoreExtra: false}]
-      },
+      }
     ])
   )
 };
 
-if (!process.env.CI) {
-  const only = [];
-  const skipped = [];
+const only = [];
+const skipped = [];
 
-  const newTests = Array.from(tests.valid).concat(Array.from(tests.invalid));
+const newTests = Array.from(tests.valid).concat(Array.from(tests.invalid));
 
-  newTests.forEach((t) => {
-    if (t.skip) {
-      delete t.skip;
-      skipped.push(t);
-    }
-    if (t.only) {
-      delete t.only;
-      only.push(t);
-    }
-  });
+newTests.forEach((t) => {
+  if (t.skip) {
+    delete t.skip;
+    skipped.push(t);
+  }
+  if (t.only) {
+    delete t.only;
+    only.push(t);
+  }
+});
 
-  const predicate = (t) => {
-    // These tests never seem to run proptype checks anyway
-    if (t.parser === parsers['@TYPESCRIPT_ESLINT']) {
-      return false;
-    }
+const predicate = (t) => {
+  // These tests never seem to run proptype checks anyway
+  if (t.parser === parsers['@TYPESCRIPT_ESLINT'] || t.parser === parsers.TYPESCRIPT_ESLINT) {
+    return false;
+  }
+  // All tests should be run in CI, with the exception of the ones skipped because of unkown bugs
+  if (!process.env.CI) {
     if (only.length > 0) {
       return only.indexOf(t) !== -1;
     }
-    if (skipped.length > 0) {
-      return skipped.indexOf(t) === -1;
-    }
-    return true;
-  };
+  }
+  if (skipped.length > 0) {
+    return skipped.indexOf(t) === -1;
+  }
+  return true;
+};
 
-  tests.valid = tests.valid.filter(predicate).map((t) => {
-    const settings = t.settings || {}
-    if (!t.code) t = {code: t}
-    return {...t, settings: {...settings, react: {version: 'detect', ...settings.react}}}
-  });
-  tests.invalid = tests.invalid.filter(predicate).map((t) => {
-    const options = t.options || [];
-    const settings = t.settings || {};
-    if (options.length > 1) {
-      throw (new Error('Idk what is going on'));
-    } else if (options.length === 1) {
-      // console.info(8192, {...t, options: [{...options[0], ignoreExtra: true}], settings: {...settings, react: {version: 'detect', ...settings.react}}})
-      return {...t, options: [{ignoreExtra: true, ...options[0]}], settings: {...settings, react: {version: 'detect', ...settings.react}}}
-      // return Object.assign({}, t, {options: [Object.assign({}, options[0], {ignoreExtra: true})]});
-    } else {
-      // console.info(8196, {...t, options: [{ignoreExtra: true}], settings: {...settings, react: {version: 'detect', ...settings.react}}})
-      return {...t, options: [{ignoreExtra: true}], settings: {...settings, react: {version: 'detect', ...settings.react}}}
-      // return Object.assign({}, t, {options: [{ignoreExtra: true}]});
-    }
+tests.valid = tests.valid.filter(predicate).map((t) => {
+  const settings = t.settings || {};
+  if (!t.code) t = {code: t};
+  return {...t, settings: {...settings, react: {version: 'detect', ...settings.react}}};
+});
+tests.invalid = tests.invalid.filter(predicate).map((t) => {
+  const options = t.options || [];
+  const settings = t.settings || {};
+  if (options.length > 1) {
+    throw (new Error('Idk what is going on'));
+  } else if (options.length === 1) {
+    // console.info(8192, {...t, options: [{...options[0], ignoreExtra: true}], settings: {...settings, react: {version: 'detect', ...settings.react}}})
+    return {...t, options: [{ignoreExtra: true, ...options[0]}], settings: {...settings, react: {version: 'detect', ...settings.react}}};
+    // return Object.assign({}, t, {options: [Object.assign({}, options[0], {ignoreExtra: true})]});
+  } else {
+    // console.info(8196, {...t, options: [{ignoreExtra: true}], settings: {...settings, react: {version: 'detect', ...settings.react}}})
+    return {...t, options: [{ignoreExtra: true}], settings: {...settings, react: {version: 'detect', ...settings.react}}};
+    // return Object.assign({}, t, {options: [{ignoreExtra: true}]});
+  }
 
-    // Object.assign({}, t, {options: (t.options || []).concat([{ignoreExtra: true}])})
-  });
-}
+  // Object.assign({}, t, {options: (t.options || []).concat([{ignoreExtra: true}])})
+});
 
 describe('should-skip-update', () => {
   const parserOptions = {
