@@ -3380,11 +3380,32 @@ const tests = {
       },
       {
         code: `
-          const Foo = ({ bar }) => {
-            return <div><Bar /></div>
+          const Hello = ({names, people}) => {
+            return <ul>{names.map((name) => <li>{name}</li>)}</ul>;
           }
-
-          memo(Foo, shouldSkipUpdate([]))
+          export default memo(Hello, shouldSkipUpdate(['names']))
+        `,
+        parser: parsers.BABEL_ESLINT
+      },
+      {
+        // If memo is not used, does nothing
+        code: `
+          const Hello = ({names, people}) => {
+            return <ul>{names.map((name) => <li>{name}</li>)}</ul>;
+          }
+          shouldSkipUpdate([])
+          export default Hello
+        `,
+        parser: parsers.BABEL_ESLINT
+      },
+      {
+        // If shouldSkipUpdate is not used in memo, does nothing
+        code: `
+          const Hello = ({names, people}) => {
+            return <ul>{names.map((name) => <li>{name}</li>)}</ul>;
+          }
+          shouldSkipUpdate([])
+          export default memo(Hello)
         `,
         parser: parsers.BABEL_ESLINT
       },
@@ -8286,6 +8307,41 @@ const tests = {
         ],
         parser: parsers.BABEL_ESLINT
       },
+      {
+        code: `
+          const Foo = ({ bar }) => {
+
+            if (!bar) return null
+
+            return <div>{bar}</div>
+          }
+
+          export default memo(Foo, shouldSkipUpdate())
+        `,
+        errors: [
+          {
+            messageId: 'missingShouldSkipUpdateDependencies',
+          }
+        ],
+        parser: parsers.BABEL_ESLINT
+      },
+      {
+        code: `
+          const Foo = ({ bar }) => {
+            return <div>{bar.id}<Bar /></div>
+          }
+
+          memo(Foo, shouldSkipUpdate(['bar.id','bar.foo']))
+        `,
+        errors: [
+          {
+            messageId: 'extraShouldSkipUpdateDependency',
+            data: {name: 'bar.foo'}
+          }
+        ],
+        parser: parsers.BABEL_ESLINT,
+        options: [{ignoreExtra: false}]
+      },
     ])
   )
 };
@@ -8333,7 +8389,7 @@ if (!process.env.CI) {
       throw (new Error('Idk what is going on'));
     } else if (options.length === 1) {
       // console.info(8192, {...t, options: [{...options[0], ignoreExtra: true}], settings: {...settings, react: {version: 'detect', ...settings.react}}})
-      return {...t, options: [{...options[0], ignoreExtra: true}], settings: {...settings, react: {version: 'detect', ...settings.react}}}
+      return {...t, options: [{ignoreExtra: true, ...options[0]}], settings: {...settings, react: {version: 'detect', ...settings.react}}}
       // return Object.assign({}, t, {options: [Object.assign({}, options[0], {ignoreExtra: true})]});
     } else {
       // console.info(8196, {...t, options: [{ignoreExtra: true}], settings: {...settings, react: {version: 'detect', ...settings.react}}})

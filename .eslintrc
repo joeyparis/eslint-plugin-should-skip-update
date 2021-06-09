@@ -1,7 +1,7 @@
 {
     "root": true,
     "extends": ["airbnb-base", "plugin:eslint-plugin/recommended", "plugin:react/recommended", "plugin:jest/recommended"],
-    "plugins": ["eslint-plugin", "react"],
+    "plugins": ["eslint-plugin", "react", "should-skip-update"],
     "env": {
        "es6": true,
        "node": true,
@@ -40,6 +40,7 @@
             "selector": "ObjectPattern",
             "message": "Object destructuring is not compatible with Node v4"
         }],
+        "should-skip-update/dependencies": 2,
         "strict": [2, "safe"],
         "valid-jsdoc": [2, {
           "requireReturn": false,
