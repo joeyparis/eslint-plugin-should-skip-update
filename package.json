@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-should-skip-update",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Eslint plugin for should-skip-update package",
   "main": "dist/index.js",
   "scripts": {
